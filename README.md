@@ -3,6 +3,17 @@
 ## Objective
 โปรเจ็คนี้เป็นโปรเจ็คที่จัดทำขึ้นเพื่อส่งในวิชา Text Analytics ของสถาบันบัณฑิตพัฒนบริหารศาสตร์(NIDA) โดยวัตถุประสงค์ของโปรเจ็คนี้ คือการ Generate เพลง ด้วย bi-gram
 
+## Simple Summary
+step 1 : change all midi file to dataframe
+
+step 2 : change dataframe to text
+
+step 3 : generate new text by using bi-gram
+
+step 4 : change new text to dataframe
+
+step 5 : change new dataframe to midi file
+
 ## 0. Import Python Packages
 เริ่มต้น เราได้ import library ที่จำเป็นในการวิเคราะห์ข้อมูลซึ่งประกอบด้วย
   1. random
@@ -209,3 +220,49 @@ for _ in range(max_words):
     seed_word = next_word
 generated_text = ' '.join(generated_text)
 ```
+
+## 3. Change text back to MIDI file
+สุดท้าย เมื่อเราได้ text ที่ generate ออกมาใหม่แล้ว เราก็ได้ทำการเปลี่ยน text กลับมาเป็น dataframe
+
+```python
+#Change text back to DataFrame
+
+str_list = generated_text.split()
+int_list = [int(num) for num in str_list]
+
+
+note_df[-1][0] = int_list[:74]
+```
+
+และนำ dataframe ที่ได้นี้ แปลงกลับไปเป็น MIDI file
+
+```python
+#Change DataFrame to MIDI file
+
+def create_midi_from_dataframe(dataframe, output_filename, midi_filename):
+    
+    midi_file = MidiFile(midi_filename)
+    note_data = []
+    
+    mid = MidiFile()
+    track = MidiTrack()
+    mid.tracks.append(track)
+    
+    i = 0
+    for track in midi_file.tracks:
+        for msg in track:
+            if msg.type == 'note_on':
+                msg.note = note_df[-1][0][i]
+                i += 1
+                
+    mid = midi_file
+    mid.save(output_filename)
+            
+    
+midi_filename = 'dummy.mid'   
+output_filename = 'output.mid'  # Replace with the desired output filename
+create_midi_from_dataframe(note_df, output_filename, midi_filename)
+```
+
+## Summary
+โดยผลลัพธ์ที่ได้นั้น เราจะได้ไฟล์เพลงใหม่ที่ชื่อว่า output.mid ออกมา
