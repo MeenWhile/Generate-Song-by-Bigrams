@@ -169,3 +169,43 @@ note_df.append(pd.DataFrame(note_data))
 note_data = extract_note_data('dummy.mid')
 note_df.append(pd.DataFrame(note_data))
 ```
+
+## 2. Use bi-gram to generate song
+เมื่อเตรียม data เสร็จแล้ว ตอนนี้ data ทั้งหมดก็จะอยู่ในรูปแบบของ dataframe ต่อมาเราก็ดึงเฉพาะ column 'note' ในแต่ละ dataframe ออกมา และเปลี่ยนข้อมูลให้เป็น string เพื่อเตรียมนำเข้าขั้นตอน generate song by bi-gram
+
+```python
+#Change DataFrame to String
+
+lst_note = []
+for i in range(len(note_df)):
+    lst_note.append(note_df[i][0].tolist())
+
+    
+str_lst = [[str(num) for num in inner_list] for inner_list in lst_note]
+formatted_sentences = []
+for inner_list in str_lst:
+    sentence = ' '.join(inner_list)
+    formatted_sentences.append(sentence)
+```
+
+และเริ่มต้น generate text(song) ด้วยคำสั่งด้านล่าง
+
+```python
+#Generate Text
+
+final_text = '. '.join(formatted_sentences) + '.'
+nltk.download('punkt')
+corpus = final_text
+tokens = nltk.word_tokenize(corpus)
+bi_grams = list(bigrams(tokens))
+cfd = ConditionalFreqDist(bi_grams)
+cpd = nltk.ConditionalProbDist(cfd, nltk.MLEProbDist)
+seed_word = "66"
+generated_text = [seed_word]
+max_words = len(extract_note_data('dummy.mid'))
+for _ in range(max_words):
+    next_word = cpd[seed_word].generate()
+    generated_text.append(next_word)
+    seed_word = next_word
+generated_text = ' '.join(generated_text)
+```
