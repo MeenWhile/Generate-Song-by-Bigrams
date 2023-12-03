@@ -1,7 +1,7 @@
 # NLP-Generate-Song-by-Bigrams
 
 ## Objective
-โปรเจ็คนี้เป็นโปรเจ็คที่จัดทำขึ้นเพื่อส่งในวิชา Text Analytics ของสถาบันบัณฑิตพัฒนบริหารศาสตร์(NIDA) โดยวัตถุประสงค์ของโปรเจ็คนี้ คือการ Generate เพลง ด้วย bi-gram
+วัตถุประสงค์ของโปรเจ็คนี้คือการ Generate เพลง ด้วย bi-gram
 
 ## Simple Summary
 step 1 : change all midi file to dataframe
